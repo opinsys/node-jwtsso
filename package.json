@@ -1,0 +1,27 @@
+{
+  "name": "connect-puavo",
+  "version": "0.0.1",
+  "description": "Puavo authentication middleware for Connect and Express",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test/*test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/opinsys/connect-puavo.git"
+  },
+  "keywords": [
+    "connect",
+    "puavo",
+    "opinsys",
+    "authentication"
+  ],
+  "author": "Esa-Matti Suuronen <esa-matti.suuronen@opinsys.fi>",
+  "license": "MIT",
+  "devDependencies": {
+    "express": "~3.3.4",
+    "mocha": "~1.12.0",
+    "connect": "~2.8.4",
+    "supertest": "~0.7.1"
+  }
+}
