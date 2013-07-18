@@ -1,4 +1,3 @@
-
 var url = require("url");
 var extend = require("xtend");
 var jwt = require("jwt-simple");
@@ -24,8 +23,10 @@ function jwtsso(options) {
             res.redirect(redirectUrl.format());
         };
 
-        req.jwt = {};
+        
         if (!req.query.jwt) return next();
+        
+        req.jwt = {};
 
         try {
             var claims = jwt.decode(req.query.jwt, options.sharedSecret);
@@ -34,7 +35,7 @@ function jwtsso(options) {
             var age = Date.now() - iat*1000;
             if (age > options.maxAge*1000) throw new Error("token is too old");
             var exp = parseInt(claims.exp, 10);
-            if (exp && exp*1000 < Date.now())throw new Error("token has expired");
+            if (exp && exp*1000 < Date.now()) throw new Error("token has expired");
             req.jwt.claims = claims;
         } catch(err) {
             req.jwt.error = err;
