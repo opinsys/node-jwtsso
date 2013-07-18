@@ -32,7 +32,7 @@ function jwtsso(options) {
             var iat = parseInt(claims.iat, 10);
             if (!iat) throw new Error("iat field is missing");
             var age = Date.now() - iat*1000;
-            if (age > options.maxAge) throw new Error("token is too old");
+            if (age > options.maxAge*1000) throw new Error("token is too old");
             var exp = parseInt(claims.exp, 10);
             if (exp && exp*1000 < Date.now())throw new Error("token has expired");
             req.jwt.claims = claims;
