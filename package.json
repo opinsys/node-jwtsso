@@ -1,7 +1,7 @@
 {
-  "name": "connect-puavo",
+  "name": "express-jwt-sso",
   "version": "0.0.1",
-  "description": "Puavo authentication middleware for Connect and Express",
+  "description": "JSON Web Token Single Sign-On consumer middleware for Express",
   "main": "index.js",
   "scripts": {
     "test": "mocha -C test/*test.js"
@@ -11,17 +11,22 @@
     "url": "https://github.com/opinsys/connect-puavo.git"
   },
   "keywords": [
-    "connect",
+    "express",
+    "jwt",
     "puavo",
     "opinsys",
-    "authentication"
+    "authentication",
+    "sso"
   ],
   "author": "Esa-Matti Suuronen <esa-matti.suuronen@opinsys.fi>",
   "license": "MIT",
   "devDependencies": {
     "express": "~3.3.4",
     "mocha": "~1.12.0",
-    "connect": "~2.8.4",
     "supertest": "~0.7.1"
+  },
+  "dependencies": {
+    "jwt-simple": "~0.1.0",
+    "xtend": "~2.0.6"
   }
 }
