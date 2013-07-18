@@ -1,5 +1,5 @@
 
-# express-jwt-sso
+# jwtsso
 
 [JSON Web Token][jwt] Single Sign-On consumer middleware for [Express][].
 
@@ -9,7 +9,7 @@ Setup Express app with express-jwt-sso
 
 ```javascript
 var express = require("express");
-var jwtsso = require("express-jwt-sso");
+var jwtsso = require("jwtsso");
 
 var app = express();
 app.use(jwtsso({
@@ -29,7 +29,7 @@ app.use(jwtsso({
 }));
 ```
 
-Redirect users to
+Redirect user to
 `https://jwtsso.example.com/sso?return_to=http%3A%2F%2Fmyapp.example.com%2Fdisplay_jwt`
 
 ```javascript
@@ -50,7 +50,7 @@ app.get("/display_jwt", function(req, res){
         return res.json(401, { message: "bad jwt token" });
     }
 
-    // If everything is ok verified data can be found from req.jwt.claims
+e   // If everything is ok verified data can be found from req.jwt.claims
     if (req.jwt.claims) {
         return res.json(req.jwt.claims);
     }

@@ -5,7 +5,7 @@ var jwt = require("jwt-simple");
 
 // https://npmjs.org/package/jwt-simple
 
-function puavoAuth(options) {
+function jwtsso(options) {
     options = extend({
         maxAge: 60
     }, options);
@@ -45,4 +45,4 @@ function puavoAuth(options) {
 }
 
 
-module.exports = puavoAuth;
+module.exports = jwtsso;

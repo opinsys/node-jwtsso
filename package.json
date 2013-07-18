@@ -1,5 +1,5 @@
 {
-  "name": "express-jwt-sso",
+  "name": "jwtsso",
   "version": "0.0.1",
   "description": "JSON Web Token Single Sign-On consumer middleware for Express",
   "main": "index.js",
