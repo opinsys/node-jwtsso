@@ -41,7 +41,7 @@ This redirects user to
 
     https://jwtsso.example.com/sso?return_to=http%3A%2F%2Fmyapp.example.com%2Fdisplay_jwt
 
-From there user is expected to be redirected back to `return_to`
+From there user is expected to be redirected back to the `return_to`
 url with the JWT token
 
     http://myapp.example.com/display_jwt?jwt=<token>
