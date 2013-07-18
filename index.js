@@ -11,7 +11,7 @@ function jwtsso(options) {
     }, options);
 
     return function(req, res, next) {
-        res.jwtRequest = function(returnTo) {
+        res.requestJwt = function(returnTo) {
             var redirectUrl = url.parse(options.authEndpoint, true);
             redirectUrl.search = undefined;
 

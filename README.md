@@ -5,13 +5,14 @@
 
 ## Example
 
-Setup Express app with express-jwt-sso
+Setup Express app with jwtsso
 
 ```javascript
 var express = require("express");
 var jwtsso = require("jwtsso");
 
 var app = express();
+
 app.use(jwtsso({
 
     // Service endpoint that issues the jwt tokens
@@ -34,7 +35,7 @@ Redirect user to
 
 ```javascript
 app.get("/login", function(req, res){
-    res.jwtRequest("/display_jwt");
+    res.requestJwt("/display_jwt");
 });
 ```
 
@@ -50,7 +51,7 @@ app.get("/display_jwt", function(req, res){
         return res.json(401, { message: "bad jwt token" });
     }
 
-e   // If everything is ok verified data can be found from req.jwt.claims
+    // If everything is ok verified data can be found from req.jwt.claims
     if (req.jwt.claims) {
         return res.json(req.jwt.claims);
     }

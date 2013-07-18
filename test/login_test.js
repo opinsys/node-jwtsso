@@ -13,7 +13,7 @@ function now() {
 
 describe("connect-puavo", function(){
 
-    describe("res.jwtRequest()", function() {
+    describe("res.requestJwt()", function() {
         beforeEach(function() {
             this.app = express();
             this.app.use(puavo({
@@ -26,7 +26,7 @@ describe("connect-puavo", function(){
         it("redirects to auth server when called from route", function(done){
 
             this.app.get("/foo", function(req, res) {
-                res.jwtRequest();
+                res.requestJwt();
             });
 
             request(this.app)
@@ -45,7 +45,7 @@ describe("connect-puavo", function(){
 
         it("can set custom path", function(done){
             this.app.get("/foo", function(req, res) {
-                res.jwtRequest("/custom/path");
+                res.requestJwt("/custom/path");
             });
 
             request(this.app)
@@ -61,7 +61,7 @@ describe("connect-puavo", function(){
 
         it("can set custom path with query string", function(done){
             this.app.get("/foo", function(req, res) {
-                res.jwtRequest("/custom/path?my=query");
+                res.requestJwt("/custom/path?my=query");
             });
 
             request(this.app)
