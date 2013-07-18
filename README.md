@@ -1,4 +1,3 @@
-
 # jwtsso
 
 [JSON Web Token][jwt] Single Sign-On consumer middleware for [Express][].
@@ -27,20 +26,27 @@ app.use(jwtsso({
     // Set max age in seconds for the tokens
     // Defaults to 60 seconds
     maxAge: 120
+    
 }));
 ```
 
-Redirect user to
-`https://jwtsso.example.com/sso?return_to=http%3A%2F%2Fmyapp.example.com%2Fdisplay_jwt`
+Request JWT token from `/login`
 
 ```javascript
 app.get("/login", function(req, res){
     res.requestJwt("/display_jwt");
 });
 ```
+This redirects user to
 
-`https://jwtsso.example.com/sso` is expected to redirect the user back with a
-JWT token to the given `return_to` url.
+    https://jwtsso.example.com/sso?return_to=http%3A%2F%2Fmyapp.example.com%2Fdisplay_jwt
+
+From there user is expected to be redirected back to `return_to`
+url with the JWT token
+
+    http://myapp.example.com/display_jwt?jwt=<token>
+
+Then on `/display_jwt` we can inspect the `req.jwt` variable
 
 ```javascript
 app.get("/display_jwt", function(req, res){
