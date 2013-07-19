@@ -7,6 +7,7 @@ var jwt = require("jwt-simple");
 
 var puavo = require("../index");
 
+
 function now() {
     return Math.round(Date.now() / 1000);
 }
@@ -16,6 +17,8 @@ describe("connect-puavo", function(){
     describe("res.requestJwt()", function() {
         beforeEach(function() {
             this.app = express();
+            this.app.use(express.cookieParser());
+            this.app.use(express.session({ secret: "secret" }));
             this.app.use(puavo({
                 authEndpoint: "https://authserver.opinsys.net/v3/remote_auth",
                 sharedSecret: "secret",
@@ -81,97 +84,100 @@ describe("connect-puavo", function(){
     describe("jwt", function() {
         beforeEach(function() {
             this.app = express();
+            this.app.use(express.cookieParser());
+            this.app.use(express.session({ secret: "secret" }));
             this.app.use(puavo({
                 authEndpoint: "https://authserver.opinsys.net/v3/remote_auth",
                 sharedSecret: "secret",
                 mountPoint: "http://myapp.example.com"
             }));
-            var self = this;
-            this.app.get("/fooroute", function(req, res) {
-                self.jwt = req.jwt;
-                res.end("ok");
-            });
 
+            this.requestWithToken = function(token, cb) {
+                request(this.app)
+                .get("/fooroute?foo=bar&jwt=" + token)
+                .end(cb);
+            }.bind(this);
         });
 
-        it("is parsed to req.jwt", function(done){
+        it("sets jwt token to session object", function(done){
+            this.app.get("/fooroute", function(req, res) {
+                res.end("ok");
+                assert(req.session.jwt, "jwt is on session object");
+                assert.equal(req.session.jwt.foo, "bar");
+                assert.equal(req.query.foo, "bar", "persist query values");
+                done();
+            });
 
             var token = jwt.encode({
                 iat: now(),
                 foo: "bar"
             }, "secret");
 
-            var self = this;
-            request(this.app)
-            .get("/fooroute?jwt=" + token)
-            .end(function(err, res) {
-                if (err) throw err;
-                assert(self.jwt);
-                assert(self.jwt.claims);
-                assert.equal(self.jwt.claims.foo, "bar");
+            this.requestWithToken(token, function(err, res) {
+                if (err) done(err);
+                assert(res.headers.location, "got redirect");
+                request(this.app)
+                .get(res.headers.location)
+                .set("cookie", res.headers["set-cookie"])
+                .end(function(err) {
+                    if (err) done(err);
+                });
+            }.bind(this));
+        });
+
+        it("emits error for invalid shared secret", function(done){
+            this.app.use(function(err, req, res, next) {
+                assert(err);
+                assert.equal(err.message, "Signature verification failed");
                 done();
             });
 
-        });
-
-        it("has an error if shared secret is invalid", function(done){
-
             var token = jwt.encode({
-                foo: "bar",
-                iat: now()
+                iat: now(),
+                foo: "bar"
             }, "invalid");
 
-            var self = this;
-            request(this.app)
-            .get("/fooroute?jwt=" + token)
-            .end(function(err, res) {
-                if (err) throw err;
-                assert(self.jwt.error, "has jwt error");
-                assert.equal(self.jwt.error.message, "Signature verification failed");
-                assert(!self.jwt.claims);
-                done();
+            this.requestWithToken(token, function(err) {
+                if (err) done(err);
             });
-
         });
 
-        it("rejects too old tokens", function(done){
+        it("emits error for too old token", function(done){
+            this.app.use(function(err, req, res, next) {
+                assert(err);
+                assert.equal(err.message, "token is too old");
+                done();
+            });
 
             var token = jwt.encode({
-                foo: "bar",
-                iat: now() - 300
+                iat: now() - 300,
+                foo: "bar"
             }, "secret");
 
-            var self = this;
-            request(this.app)
-            .get("/fooroute?jwt=" + token)
-            .end(function(err, res) {
-                if (err) throw err;
-                assert(self.jwt.error, "has jwt error");
-                assert.equal(self.jwt.error.message, "token is too old");
-                assert(!self.jwt.claims);
-                done();
+            this.requestWithToken(token, function(err) {
+                if (err) done(err);
             });
         });
 
-        it("rejects based on exp field", function(done){
+        it("emits error for expired tokens", function(done){
+            this.app.use(function(err, req, res, next) {
+                assert(err);
+                assert.equal(err.message, "token has expired");
+                done();
+            });
 
             var token = jwt.encode({
-                foo: "bar",
-                iat: now() - 10,
-                exp: now() - 5
+                iat: now() - 40,
+                exp: now() - 3,
+                foo: "bar"
             }, "secret");
 
-            var self = this;
-            request(this.app)
-            .get("/fooroute?jwt=" + token)
-            .end(function(err, res) {
-                if (err) throw err;
-                assert(self.jwt.error, "has jwt error");
-                assert.equal(self.jwt.error.message, "token has expired");
-                assert(!self.jwt.claims);
-                done();
+            this.requestWithToken(token, function(err) {
+                if (err) done(err);
             });
         });
+
 
     });
+
 });

@@ -4,7 +4,7 @@
 
 ## Example
 
-Setup Express app with jwtsso
+Setup Express app with jwtsso and session middleware
 
 ```javascript
 var express = require("express");
@@ -12,6 +12,8 @@ var jwtsso = require("jwtsso");
 
 var app = express();
 
+app.use(express.cookieParser());
+app.use(express.cookieSession({ secret: "secret" }));
 app.use(jwtsso({
 
     // Service endpoint that issues the jwt tokens
@@ -26,46 +28,40 @@ app.use(jwtsso({
     // Set max age in seconds for the tokens
     // Defaults to 60 seconds
     maxAge: 120
-    
+
 }));
 ```
 
-Request JWT token from `/login`
+Now from any route or latter middleware you can call `res.requestJwt()` to get
+a JWT token from the `authEndpoint`. The token will be saved to
+`req.session.jwt`.
+
+For example to ensure that JWT token is always present you can add following
+additional middleware
 
 ```javascript
-app.get("/login", function(req, res){
-    res.requestJwt("/display_jwt");
-});
-```
-This redirects user to
-
-    https://jwtsso.example.com/sso?return_to=http%3A%2F%2Fmyapp.example.com%2Fdisplay_jwt
-
-From there user is expected to be redirected back to the `return_to`
-url with the JWT token
-
-    http://myapp.example.com/display_jwt?jwt=<token>
-
-Then on `/display_jwt` we can inspect the `req.jwt` variable
-
-```javascript
-app.get("/display_jwt", function(req, res){
-
-    // If JWT token is signed with invalid shared secret, is too old, or expired
-    // the error will be set to req.jwt.error
-    if (req.jwt.error) {
-        return res.json(401, { message: "bad jwt token" });
-    }
-
-    // If everything is ok verified data can be found from req.jwt.claims
-    if (req.jwt.claims) {
-        return res.json(req.jwt.claims);
-    }
-
-    return res.json(401, { message: "No jwt  data" });
+app.use(function(req, res, next){
+    if (!req.session.jwt) return res.requestJwt();
+    next();
 });
 ```
 
+By default `res.requestJwt([custom path])` will redirect back to same url where
+it was called from or you can pass in a custom path.
+
+## Authentication endpoint
+
+Under the hood call to `res.requestJwt()` on `/current/path` redirects user to
+
+    https://jwtsso.example.com/sso?return_to=http%3A%2F%2Fmyapp.example.com%2Fcurrent/path
+
+From there authentication endpoint is expected to redirect user back to url
+specified in the `return_to` query value with the JWT token
+
+    http://myapp.example.com/current/path?jwt=<token>
+
+jwtsso then detects JWT token in the query string, validates it, sets it to
+`req.session.jwt` and clears it from the url bar with an additional redirect.
 
 [Express]: http://expressjs.com/
 [jwt]: http://tools.ietf.org/html/draft-jones-json-web-token

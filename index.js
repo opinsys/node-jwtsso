@@ -10,11 +10,12 @@ function jwtsso(options) {
     }, options);
 
     return function(req, res, next) {
+
         res.requestJwt = function(returnTo) {
             var redirectUrl = url.parse(options.authEndpoint, true);
-            redirectUrl.search = undefined;
+            redirectUrl.search = null;
 
-            returnTo = url.resolve(options.mountPoint, returnTo || req.path);
+            returnTo = url.resolve(options.mountPoint, returnTo || req.url);
 
             redirectUrl.query = extend(redirectUrl.query, {
                 return_to: returnTo
@@ -23,25 +24,28 @@ function jwtsso(options) {
             res.redirect(redirectUrl.format());
         };
 
-        
         if (!req.query.jwt) return next();
-        
-        req.jwt = {};
+        if (!req.session) return next(new Error("jwtsso requires req.session!"));
 
-        try {
-            var claims = jwt.decode(req.query.jwt, options.sharedSecret);
-            var iat = parseInt(claims.iat, 10);
-            if (!iat) throw new Error("iat field is missing");
-            var age = Date.now() - iat*1000;
-            if (age > options.maxAge*1000) throw new Error("token is too old");
-            var exp = parseInt(claims.exp, 10);
-            if (exp && exp*1000 < Date.now()) throw new Error("token has expired");
-            req.jwt.claims = claims;
-        } catch(err) {
-            req.jwt.error = err;
-        }
+        var claims = jwt.decode(req.query.jwt, options.sharedSecret);
 
-        next();
+        // http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-10#section-4.1.6
+        var iat = parseInt(claims.iat, 10);
+        if (!iat) return next(new Error("iat field is missing"));
+        var age = Date.now() - iat*1000;
+        if (age > options.maxAge*1000) return next(new Error("token is too old"));
+
+        // http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-10#section-4.1.4
+        var exp = parseInt(claims.exp, 10);
+        if (exp && exp*1000 < Date.now()) return next(new Error("token has expired"));
+
+        req.session.jwt = claims;
+
+        // Issue new redirect back here to clear the jwt token from the url
+        var redirUrl = url.parse(req.url, true);
+        redirUrl.search = null;
+        delete redirUrl.query.jwt;
+        res.redirect(redirUrl.format());
     };
 }
 
