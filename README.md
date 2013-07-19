@@ -4,7 +4,7 @@
 
 [JSON Web Token][jwt] Single Sign-On consumer middleware for [Express][].
 
-## Example
+## Usage
 
 Setup Express app with jwtsso and session middleware
 
@@ -65,7 +65,7 @@ specified in the `return_to` query value with the JWT token
 jwtsso then detects JWT token in the query string, validates it, sets it to
 `req.session.jwt` and clears it from the url bar with an additional redirect.
 
-Such authentication endpoint can be found from the puavo-rest project.
+This module was designed for the Single Sign-On feature of puavo-rest
 
 <https://github.com/opinsys/puavo-users/blob/master/rest/doc/SSO.md>
 
