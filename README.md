@@ -17,13 +17,13 @@ app.use(express.cookieSession({ secret: "secret" }));
 app.use(jwtsso({
 
     // Service endpoint that issues the jwt tokens
-    authEndpoint: "https://jwtsso.example.com/sso",
+    authEndpoint: "https://organisation.opinsys.net/v3/sso",
 
     // Shared secret string with the above service
     sharedSecret: "secret",
 
     // Public mountpoint for this app
-    mountPoint: "http://myapp.example.com",
+    mountPoint: "http://app.example.com",
 
     // Set max age in seconds for the tokens
     // Defaults to 60 seconds
@@ -53,12 +53,12 @@ it was called from or you can pass in a custom path.
 
 Under the hood call to `res.requestJwt()` on `/current/path` redirects user to
 
-    https://jwtsso.example.com/sso?return_to=http%3A%2F%2Fmyapp.example.com%2Fcurrent/path
+    https://organisation.opinsys.net/v3/sso?return_to=http%3A%2F%2Fapp.example.com%2Fcurrent/path
 
 From there authentication endpoint is expected to redirect user back to url
 specified in the `return_to` query value with the JWT token
 
-    http://myapp.example.com/current/path?jwt=<token>
+    http://app.example.com/current/path?jwt=<token>
 
 jwtsso then detects JWT token in the query string, validates it, sets it to
 `req.session.jwt` and clears it from the url bar with an additional redirect.
