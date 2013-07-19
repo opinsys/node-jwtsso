@@ -63,6 +63,11 @@ specified in the `return_to` query value with the JWT token
 jwtsso then detects JWT token in the query string, validates it, sets it to
 `req.session.jwt` and clears it from the url bar with an additional redirect.
 
+Such authentication endpoint can be found from the puavo-rest project.
+
+<https://github.com/opinsys/puavo-users/blob/master/rest/doc/SSO.md>
+
+
 [Express]: http://expressjs.com/
 [jwt]: http://tools.ietf.org/html/draft-jones-json-web-token
 
