@@ -55,12 +55,12 @@ it was called from or you can pass in a custom path.
 
 Under the hood call to `res.requestJwt()` on `/current/path` redirects user to
 
-    https://api.example.com/sso?return_to=http%3A%2F%2Fapp.example.com%2Fcurrent/path
+    https://api.authprovider.example/sso?return_to=http%3A%2F%2Fapplication.example%2Fcurrent/path
 
 From there authentication endpoint is expected to redirect user back to url
 specified in the `return_to` query value with the JWT token
 
-    http://app.example.com/current/path?jwt=<token>
+    http://application.example/current/path?jwt=<token>
 
 jwtsso then detects JWT token in the query string, validates it, sets it to
 `req.session.jwt` and clears it from the url bar with an additional redirect.
