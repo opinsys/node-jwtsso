@@ -19,13 +19,13 @@ app.use(express.cookieSession({ secret: "secret" }));
 app.use(jwtsso({
 
     // Service endpoint that issues the jwt tokens
-    authEndpoint: "https://api.example.com/sso",
+    authEndpoint: "https://api.authprovider.example/sso",
 
     // Shared secret string with the above service
     sharedSecret: "secret",
 
     // Public mountpoint for this app
-    mountPoint: "http://app.example.com",
+    mountPoint: "http://application.example",
 
     // Set max age in seconds for the tokens
     // Defaults to 60 seconds
