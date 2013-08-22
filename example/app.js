@@ -58,6 +58,6 @@ app.get("/*", function(req, res) {
 
 app.listen(PORT, function(err) {
     if (err) throw err;
-    console.log("Listening", PORT);
+    console.log("http://localhost:"  +  PORT);
 });
 
