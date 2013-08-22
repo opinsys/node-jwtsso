@@ -19,7 +19,7 @@ app.use(express.cookieSession({ secret: "secret" }));
 app.use(jwtsso({
 
     // Service endpoint that issues the jwt tokens
-    authEndpoint: "https://organisation.opinsys.net/v3/sso",
+    authEndpoint: "https://api.example.com/sso",
 
     // Shared secret string with the above service
     sharedSecret: "secret",
@@ -55,7 +55,7 @@ it was called from or you can pass in a custom path.
 
 Under the hood call to `res.requestJwt()` on `/current/path` redirects user to
 
-    https://organisation.opinsys.net/v3/sso?return_to=http%3A%2F%2Fapp.example.com%2Fcurrent/path
+    https://api.example.com/sso?return_to=http%3A%2F%2Fapp.example.com%2Fcurrent/path
 
 From there authentication endpoint is expected to redirect user back to url
 specified in the `return_to` query value with the JWT token
