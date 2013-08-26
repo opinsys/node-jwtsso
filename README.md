@@ -65,9 +65,7 @@ specified in the `return_to` query value with the JWT token
 jwtsso then detects JWT token in the query string, validates it, sets it to
 `req.session.jwt` and clears it from the url bar with an additional redirect.
 
-This module was designed for the Single Sign-On feature of puavo-rest
-
-<https://github.com/opinsys/puavo-users/blob/master/rest/doc/SSO.md>
+This module was originally designed for [Opinsys SSO](https://api.opinsys.fi/v3/sso/developers)
 
 
 [Express]: http://expressjs.com/
