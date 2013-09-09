@@ -52,6 +52,10 @@ app.get("/*", function(req, res) {
             "<pre>",
             JSON.stringify(req.session.jwt, null, "  "),
             "</pre>",
+            "<p>query strings</p>",
+            "<pre>",
+            JSON.stringify(req.params, null, "  "),
+            "</pre>",
             "<a href=logout>logout</a>"
     ].join(" "));
 });
