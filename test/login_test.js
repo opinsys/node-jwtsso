@@ -6,10 +6,15 @@ var request = require("supertest");
 var jwt = require("jwt-simple");
 
 var puavo = require("../index");
-
+var testHookRunCount = 0;
 
 function now() {
     return Math.round(Date.now() / 1000);
+}
+
+function testHook(cb) {
+    testHookRunCount += 1;
+    cb();
 }
 
 describe("connect-puavo", function(){
@@ -178,6 +183,57 @@ describe("connect-puavo", function(){
         });
 
 
+
+    });
+
+    describe("jwt asdf", function() {
+        beforeEach(function() {
+            this.app = express();
+            this.app.use(express.cookieParser());
+            this.app.use(express.session({ secret: "secret" }));
+            this.app.use(puavo({
+                authEndpoint: "https://authserver.opinsys.net/v3/remote_auth",
+                sharedSecret: "secret",
+                mountPoint: "http://myapp.example.com",
+                hook: function(token, done) {
+                    testHookRunCount += 1;
+                    assert.equal(token.foo, "bar");
+                    done();
+                }
+            }));
+
+            this.requestWithToken = function(token, cb) {
+                request(this.app)
+                .get("/fooroute?foo=bar&jwt=" + token)
+                .end(cb);
+            }.bind(this);
+        });
+
+        it("hook function is ran", function(done) {
+            this.app.get("/fooroute", function(req, res) {
+                res.end("ok");
+                done();
+            });
+
+            var token = jwt.encode({
+                iat: now(),
+                foo: "bar"
+            }, "secret");
+
+
+            this.requestWithToken(token, function(err, res) {
+                if (err) return done(err);
+
+                assert.equal(testHookRunCount, 1);
+
+                request(this.app)
+                .get(res.headers.location)
+                .end(function(err) {
+                    if (err) return done(err);
+                    assert.equal(testHookRunCount, 1, "hook should be called only once");
+                });
+            }.bind(this));
+        });
     });
 
 });

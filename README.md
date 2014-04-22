@@ -31,6 +31,12 @@ app.use(jwtsso({
     // Defaults to 60 seconds
     maxAge: 120
 
+    // Hook function call after login
+    hook: function(token, done) {
+        console.log("got token", token);
+        done();
+    };
+
 }));
 ```
 

@@ -45,7 +45,18 @@ function jwtsso(options) {
         var redirUrl = url.parse(req.url, true);
         redirUrl.search = null;
         delete redirUrl.query.jwt;
-        res.redirect(redirUrl.format());
+
+        if (options.hook) {
+            options.hook(claims, function(err) {
+                if (err) return next();
+
+                res.redirect(redirUrl.format());
+            });
+        }
+        else {
+            res.redirect(redirUrl.format());
+        }
+
     };
 }
 
