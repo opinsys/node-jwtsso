@@ -12,11 +12,6 @@ function now() {
     return Math.round(Date.now() / 1000);
 }
 
-function testHook(cb) {
-    testHookRunCount += 1;
-    cb();
-}
-
 describe("connect-puavo", function(){
 
     describe("res.requestJwt()", function() {
