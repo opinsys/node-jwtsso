@@ -181,7 +181,7 @@ describe("connect-puavo", function(){
 
     });
 
-    describe("jwt asdf", function() {
+    describe("hook options", function() {
         beforeEach(function() {
             this.app = express();
             this.app.use(express.cookieParser());
