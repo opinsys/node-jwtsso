@@ -22,7 +22,7 @@ describe("connect-puavo", function(){
             this.app.use(puavo({
                 authEndpoint: "https://authserver.opinsys.net/v3/remote_auth",
                 sharedSecret: "secret",
-                mountPoint: "http://myapp.example.com"
+                host: "myapp.example.com"
             }));
         });
 
