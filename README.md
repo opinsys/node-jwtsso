@@ -25,7 +25,15 @@ app.use(jwtsso({
     sharedSecret: "secret",
 
     // Public mountpoint for this app
-    mountPoint: "http://application.example",
+    mountPoint: "", // or /myapp if it lives on sub url
+
+    // Public hostname of your application. This is read from a Host header
+    // Use this to override it.
+    // host: "application.example"
+
+    // Scheme. "http" or "https". This is read from a "X-Scheme" header.
+    // Defaults to "http". Use this to override it.
+    // scheme: "http",
 
     // Set max age in seconds for the tokens
     // Defaults to 60 seconds

@@ -15,7 +15,15 @@ function jwtsso(options) {
             var redirectUrl = url.parse(options.authEndpoint, true);
             redirectUrl.search = null;
 
-            returnTo = url.resolve(options.mountPoint, returnTo || req.url);
+            var host = options.host || req.headers.host;
+            var scheme = options.scheme || req.headers["x-scheme"] || "http";
+            if (!host) {
+                throw new Error("Cannot find a Host header from request nor one is configured in the options");
+            }
+
+            var appUrl = scheme + "://" + host + (options.mountPoint || "");
+
+            returnTo = url.resolve(appUrl, returnTo || req.url);
 
             redirectUrl.query = extend(redirectUrl.query, {
                 return_to: returnTo
