@@ -56,7 +56,7 @@ function jwtsso(options) {
 
         if (options.hook) {
             options.hook(claims, function(err) {
-                if (err) return next();
+                if (err) return next(err);
 
                 res.redirect(redirUrl.format());
             });
