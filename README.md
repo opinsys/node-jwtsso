@@ -29,7 +29,7 @@ app.use(jwtsso({
 
     // Public hostname of your application. This is read from a Host header
     // Use this to override it.
-    // host: "application.example"
+    // host: "application.example",
 
     // Scheme. "http" or "https". This is read from a "X-Scheme" header.
     // Defaults to "http". Use this to override it.
@@ -37,13 +37,13 @@ app.use(jwtsso({
 
     // Set max age in seconds for the tokens
     // Defaults to 60 seconds
-    maxAge: 120
+    maxAge: 120,
 
     // Hook function call after login
     hook: function(token, done) {
         console.log("got token", token);
         done();
-    };
+    }
 
 }));
 ```
